@@ -1,0 +1,6 @@
+data/
+Data/
+build/
+Build/
+*.pyc
+*.code-workspace
