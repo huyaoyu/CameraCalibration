@@ -188,13 +188,13 @@ def handle_args():
     parser.add_argument("outdir", type=str, 
         help="The sub-directory for the output results.")
 
-    parser.add_argument("--row", type=int, default=8,
+    parser.add_argument("--row", type=int, default=6,
         help="The number of row of corners on the chessboard.")
 
-    parser.add_argument("--col", type=int, default=11, 
+    parser.add_argument("--col", type=int, default=8, 
         help="The number of column of corners on the chessboard.")
 
-    parser.add_argument("--csize", type=float, default=0.0015, 
+    parser.add_argument("--csize", type=float, default=0.115, 
         help="The width of the squares on the chessboard. Unit m.")
 
     parser.add_argument("--image-pattern", type=str, default="*.png", 
