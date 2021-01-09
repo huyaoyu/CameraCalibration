@@ -3,7 +3,7 @@
 ## Usage
 
 ```
-python3 Calibration \
+python3 Calibration.py \
     <base dir> <image dir> <output dir> \
     --row <row number or crossings> \
     --col <column number of crossings> \
