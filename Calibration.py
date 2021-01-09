@@ -18,9 +18,9 @@ from ChessboardDetector import downsample_and_detect_corners
 G_FLAG_DEBUG  = 0
 G_DEBUG_COUNT = 2
 
-FN_EXT                    = ".dat"
-FN_CAMERA_MATRIX          = "CameraMatrix"
-FN_DISTORTION_COEFFICIENT = "DistortionCoefficient"
+FN_EXT                    = '.dat'
+FN_CAMERA_MATRIX          = 'CameraMatrix'
+FN_DISTORTION_COEFFICIENT = 'DistortionCoefficient'
 
 def test_dir(d):
     '''
@@ -65,7 +65,7 @@ def read_image(fn, flagGray=False, dtype=np.uint8):
     NumPy array.
     '''
     if ( not os.path.isfile(fn) ):
-        raise Exception("%s does not exits. " % (fn))
+        raise Exception('%s does not exits. ' % (fn))
     
     img = cv2.imread(fn, cv2.IMREAD_UNCHANGED)
     if ( flagGray and img.ndim >= 3):
@@ -103,13 +103,13 @@ def target_collection( fns, gridRow, gridCol, gridSize ):
 
     nImages = len(fns)
 
-    print("%d files to process..." % (nImages))
+    print('%d files to process...' % (nImages))
 
     count        = 0
     countFailed  = 0
 
     for f in fns:
-        print("Process %s (%d / %d)..." % (f, count+1, nImages), end = '')
+        print('Process %s (%d / %d)...' % (f, count+1, nImages), end = '')
 
         img = read_image(f, flagGray=True)
 
@@ -127,21 +127,21 @@ def target_collection( fns, gridRow, gridCol, gridSize ):
             cv2.imshow('img', imgResized)
             cv2.waitKey(500)
 
-            print("OK.")
+            print('OK.')
         else:
-            print("Failed.")
+            print('Failed.')
 
         count += 1
 
     cv2.destroyAllWindows()
 
     if ( countFailed > 0 ):
-        print("%d of %d images failed." % (countFailed, nImages))
+        print('%d of %d images failed.' % (countFailed, nImages))
 
     return objPoints, imgPoints, img.shape
 
 def calibrate_single_camera( imgFns, gridRow, gridCol, gridSize, flagLowDistortion=False):
-    """
+    '''
     Calibrate a single camera.
 
     Arguments: 
@@ -154,13 +154,13 @@ def calibrate_single_camera( imgFns, gridRow, gridCol, gridSize, flagLowDistorti
     cameraMatrix (array): 3x3 intrinsic matrix. 
     distortionCoefficients (array): Distortion coefficients.
     reprojectError (float): Reprojection error.  
-    """
+    '''
 
     # Collect the target data.
     objPoints, imgPoints, imgShape = target_collection( 
         imgFns, gridRow, gridCol, gridSize )
 
-    print("Begin calibrating...")
+    print('Begin calibrating...')
 
     calibFlags = cv2.CALIB_FIX_K4 + cv2.CALIB_FIX_K5 + cv2.CALIB_FIX_K6
     if ( flagLowDistortion ):
@@ -177,30 +177,30 @@ def calibrate_single_camera( imgFns, gridRow, gridCol, gridSize, flagLowDistorti
     return cameraMatrix, distortionCoefficients, reprojectError
 
 def handle_args():
-    parser = argparse.ArgumentParser(description="Calibrate single camera.")
+    parser = argparse.ArgumentParser(description='Calibrate single camera.')
 
-    parser.add_argument("basedir", type=str, 
-        help="The base directory.")
+    parser.add_argument('basedir', type=str, 
+        help='The base directory.')
     
-    parser.add_argument("imgdir", type=str, 
-        help="The sub-directory for the input images.")
+    parser.add_argument('imgdir', type=str, 
+        help='The sub-directory for the input images.')
     
-    parser.add_argument("outdir", type=str, 
-        help="The sub-directory for the output results.")
+    parser.add_argument('outdir', type=str, 
+        help='The sub-directory for the output results.')
 
-    parser.add_argument("--row", type=int, default=6,
-        help="The number of row of corners on the chessboard.")
+    parser.add_argument('--row', type=int, default=6,
+        help='The number of row of corners on the chessboard.')
 
-    parser.add_argument("--col", type=int, default=8, 
-        help="The number of column of corners on the chessboard.")
+    parser.add_argument('--col', type=int, default=8, 
+        help='The number of column of corners on the chessboard.')
 
-    parser.add_argument("--csize", type=float, default=0.115, 
-        help="The width of the squares on the chessboard. Unit m.")
+    parser.add_argument('--csize', type=float, default=0.115, 
+        help='The width of the squares on the chessboard. Unit m.')
 
-    parser.add_argument("--image-pattern", type=str, default="*.png", 
-        help="The file search pattern for the input images.")
+    parser.add_argument('--image-pattern', type=str, default='*.png', 
+        help='The file search pattern for the input images.')
 
-    parser.add_argument("--low-distortion", action='store_true', default=False, 
+    parser.add_argument('--low-distortion', action='store_true', default=False, 
         help='Set this flag to enable low distortion calibration. ')
     
     args = parser.parse_args()
@@ -213,36 +213,38 @@ def main():
     # Handle the arguments.
     args = handle_args()
 
-    print("Begin calibrating %s/%s. " % ( args.basedir, args.imgdir ))
+    print('Begin calibrating %s/%s. ' % ( args.basedir, args.imgdir ))
 
-    imgDir = "%s/%s" % ( args.basedir, args.imgdir )
-    outDir = "%s/%s" % ( args.basedir, args.outdir )
+    imgDir = '%s/%s' % ( args.basedir, args.imgdir )
+    outDir = '%s/%s' % ( args.basedir, args.outdir )
 
     # Prepare the output directory.
     test_dir( outDir )
 
     # Prepare the filenames.
-    imgFns = find_files( "%s/%s" % ( imgDir, args.image_pattern ) )
+    imgFns = find_files( '%s/%s' % ( imgDir, args.image_pattern ) )
 
     cameraMatrix, distortionCoefficients, reprojectError = \
         calibrate_single_camera( imgFns, args.row, args.col, args.csize, 
         args.low_distortion )
 
     # Print and save the data.
-    print("reprojectError = \n{}".format(reprojectError))
+    print('reprojectError = \n{}'.format(reprojectError))
     reprojectErrorWrapper = np.array([reprojectError])
-    np.savetxt(os.path.join(outDir, "ReprojectError.dat"), reprojectErrorWrapper)
+    np.savetxt(os.path.join(outDir, 'ReprojectError.dat'), reprojectErrorWrapper)
 
-    print("cameraMatrix = \n{}".format(cameraMatrix))
+    print('cameraMatrix = \n{}'.format(cameraMatrix))
     np.savetxt( os.path.join(outDir, '%s%s' % (FN_CAMERA_MATRIX, FN_EXT)), cameraMatrix )
 
-    print("distortionCoefficients = \n{}".format(distortionCoefficients))
+    print('distortionCoefficients = \n{}'.format(distortionCoefficients))
     np.savetxt( os.path.join(outDir, '%s%s' % (FN_DISTORTION_COEFFICIENT, FN_EXT)), distortionCoefficients )
 
-    print("Done with %s. " % ( imgDir ))
+    print('All the results written to %s. ' % (outDir))
+
+    print('Done with %s. ' % ( imgDir ))
 
     return 0
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import sys
     sys.exit( main() )

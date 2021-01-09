@@ -8,9 +8,9 @@ import cv2
 import numpy as np
 
 def _pdist(p1, p2):
-    """
+    '''
     Distance bwt two points. p1 = (x, y), p2 = (x, y)
-    """
+    '''
     return np.sqrt(np.power(p1[0] - p2[0], 2) + np.power(p1[1] - p2[1], 2))
 
 def downsample_and_detect_corners(img, bSize):
@@ -73,7 +73,7 @@ def downsample_and_detect_corners(img, bSize):
                 corners=np.rot90(corners.reshape(bRows, bCols, 2), 3).reshape(bCols*bRows, 1, 2)
 
     # Refine the corners on the downsampled images.
-    minDistDownsampled = float("inf")
+    minDistDownsampled = float('inf')
     for row in range(bRows):
         for col in range(bCols - 1):
             index = row*bRows + col
